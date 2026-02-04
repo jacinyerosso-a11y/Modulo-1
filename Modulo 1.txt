@@ -1,0 +1,44 @@
+
+Práctica #1 Modulo 1
+En esta parte solo se realizó la instalación.
+
+
+
+Pratica 2 Modulo 1
+ip a
+ip link
+nmcli device status
+ip route
+nmcli con show
+nmcli con up "Wired connection 1"
+nmcli con mod "Wired connection 1" ipv4.method auto
+nmcli con down "Wired connection 1" && nmcli con up "Wired connection 1"
+nmcli con mod "Wired connection 1" ipv4.addresses 192.168.1.50/24
+nmcli con mod "Wired connection 1" ipv4.gateway 192.168.1.1
+nmcli con mod "Wired connection 1" ipv4.dns "8.8.8.8 8.8.4.4"
+nmcli con mod "Wired connection 1" ipv4.method manual
+nmcli con down "Wired connection 1" && nmcli con up "Wired connection 1"
+ip a
+ip route
+resolvectl status
+ping -c 4 8.8.8.8
+
+Pratica 3 Modulo 1
+
+sudo adduser jacinyer
+sudo usermod -aG sudo jacinyer
+groups jacinyer
+sudo deluser --remove-home invitado
+sudo groupdel guest
+
+Pratica 4 Modulo 1
+mkdir -p materia
+touch materia/estudiante.txt
+vi materia/estudiante.txt
+ls -l materia/estudiante.txt
+chmod 700 materia/estudiante.txt
+ls -l materia/estudiante.txt
+sudo chgrp guest materia/estudiante.txt
+chmod 070 materia/estudiantes2
+rm -r materia
+rm -rf materia
