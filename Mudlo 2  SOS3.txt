@@ -1,0 +1,38 @@
+Pratica 1
+sudo apt update
+sudo apt upgrade -y
+cat /etc/apt/sources.list
+ls /etc/apt/sources.list.d/
+apt search bashtop
+apt-cache search bashtop
+git clone https://github.com/aristocratos/bashtop.git
+cd bashtop
+sudo make install
+bashtop
+sudo make uninstall
+rm -rf ~/.config/bashtop
+sudo apt autoremove -y
+sudo apt autoclean
+Pratica 2
+crontab -e
+0 23 * * * sudo apt update && sudo apt upgrade -y
+0 3 * * 0 /sbin/reboot
+crontab -l
+ls /tmp
+at now + 1 minute
+rm -rf /tmp/*
+Ctrl + D
+atq
+Pratica 3
+lsblk
+sudo mkfs.ext4 /dev/sdb1
+mkdir ~/Escritorio/disco20GB
+sudo mount /dev/sdb1 ~/Escritorio/disco20GB
+cd ~/Escritorio/disco20GB
+touch AdrianAlcantara.txt
+ls
+cd ~
+sudo umount ~/Escritorio/disco20GB
+sudo mount /dev/sdb1 /mnt
+cd /mnt
+ls
