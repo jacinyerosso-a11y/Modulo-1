@@ -1,0 +1,118 @@
+Modulo 4
+Pratica 1
+sudo apt update
+sudo apt install apache2 -y
+sudo systemctl enable apache2
+sudo systemctl start apache2
+
+sudo mkdir -p /var/www/hola
+sudo chown -R $USER:$USER /var/www/hola
+
+echo '<!DOCTYPE html>
+<html>
+<head><title>Hola Mundo</title></head>
+<body>
+<h1>Hola Mundo</h1>
+</body>
+</html>' | sudo tee /var/www/hola/index.html
+
+sudo nano /etc/apache2/sites-available/hola.conf
+sudo a2ensite hola.conf
+sudo a2dissite 000-default.conf
+sudo systemctl restart apache2
+
+sudo mkdir -p /var/www/jacinyer
+sudo chown -R $USER:$USER /var/www/jacinyer
+
+echo '<!DOCTYPE html>
+<html>
+<head><title>Datos Personales</title></head>
+<body>
+<h1>Jacinyer Rosso</h1>
+<h2>Matricula: 2025-1440</h2>
+<h3>Materia: Sistema Operativo</h3>
+</body>
+</html>' | sudo tee /var/www/jacinyer/index.html
+
+sudo nano /etc/apache2/ports.conf
+Listen 8080
+sudo nano /etc/apache2/sites-available/jacinyer.conf
+sudo a2ensite jacinyer.conf
+sudo systemctl restart apache2
+
+Pratica 2
+sudo apt update
+sudo apt install postfix mailutils -y
+sudo systemctl enable postfix
+sudo systemctl start postfix
+sudo systemctl status postfix
+echo "Jacinyer Rosso 2025-1440" | mail -s "MambruSeFueALaGuerra" os3conadrian@gmail.com
+mailq
+# 0) (Opcional pero recomendado) Poner hostname y hosts
+sudo hostnamectl set-hostname mailserver
+echo "127.0.1.1 mailserver" | sudo tee -a /etc/hosts
+
+# 1) Instalar Postfix + herramientas de correo
+sudo apt update
+sudo apt install postfix mailutils -y
+
+# Durante el asistente:
+# - General type of mail configuration: Internet Site
+# - System mail name: mailserver (o tu dominio si tienes)
+
+# 2) Asegurar que Postfix esté corriendo
+sudo systemctl enable postfix
+sudo systemctl restart postfix
+sudo systemctl status postfix --no-pager
+
+# 3) Configuración básica (asegura envío local y salida SMTP)
+sudo postconf -e "myhostname = mailserver"
+sudo postconf -e "myorigin = /etc/mailname"
+sudo postconf -e "inet_interfaces = all"
+sudo postconf -e "inet_protocols = all"
+sudo postconf -e "mydestination = \$myhostname, localhost.localdomain, localhost"
+sudo postconf -e "mynetworks = 127.0.0.0/8 [::1]/128"
+sudo postconf -e "home_mailbox = Maildir/"
+
+# 4) Aplicar cambios y recargar
+sudo systemctl restart postfix
+
+# 5) Abrir puerto 25 (si usas UFW; si no tienes UFW, ignora)
+sudo ufw allow 25/tcp 2>/dev/null || true
+sudo ufw reload 2>/dev/null || true
+
+# 6) Probar conectividad a internet (si esto falla, NO saldrá el correo)
+ping -c 3 8.8.8.8
+
+# 7) Enviar el correo EXACTO al maestro
+echo "Jacinyer Rosso 2025-1440" | mail -s "MambruSeFueALaGuerra" os3conadrian@gmail.com
+
+# 8) Ver si quedó en cola (debe quedar vacío o bajar rápido)
+mailq
+
+# 9) Ver el log del intento de envío (lo que el profe ama)
+sudo tail -n 80 /var/log/mail.log
+
+Pratica 3 
+sudo apt update
+sudo apt install cups cups-pdf -y
+
+sudo systemctl enable cups
+sudo systemctl start cups
+
+sudo usermod -aG lpadmin $USER
+
+sudo nano /etc/cups/cupsd.conf
+<Location />
+  Allow all
+</Location>
+
+<Location /admin>
+  Allow all
+</Location>
+
+<Location /admin/conf>
+  Allow all
+</Location>
+sudo systemctl restart cups
+http://localhost:631
