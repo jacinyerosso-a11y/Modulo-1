@@ -1,0 +1,53 @@
+Modulo 5
+Pratica 1
+
+mkdir ~/sync_rsync
+cd ~/sync_rsync
+touch archivo_{1..100}.txt
+ls
+ls | wc -l
+ssh usuario@IP_DEL_SERVIDOR_SECUNDARIO
+rsync -avz ~/sync_rsync/ usuario@IP_DEL_SERVIDOR_SECUNDARIO:~/sync_rsync/
+nano ~/sync_rsync.sh
+chmod +x ~/sync_rsync.sh
+./sync_rsync.sh
+crontab -e
+crontab -l
+touch ~/sync_rsync/prueba.txt
+ls | grep prueba
+
+Pratica 2
+sudo apt update
+sudo apt install heartbeat -y
+sudo nano /etc/ha.d/authkeys
+sudo nano /etc/ha.d/ha.cf
+sudo nano /etc/ha.d/haresources
+sudo hostnamectl set-hostname node1
+sudo hostnamectl set-hostname node2
+sudo nano /etc/hosts
+sudo systemctl restart heartbeat
+sudo systemctl status heartbeat
+ip a
+sudo reboot
+sudo systemctl stop heartbeat
+ip a
+
+Pratica 3
+
+sudo apt update
+sudo apt install apache2 -y
+sudo systemctl status apache2
+sudo nano /var/www/html/index.html
+sudo systemctl restart apache2
+sudo systemctl restart apache2
+sudo nano /var/www/html/index.html
+sudo apt install keepalived -y
+ip a
+sudo nano /etc/keepalived/keepalived.conf
+sudo nano /etc/keepalived/keepalived.conf
+sudo systemctl start keepalived
+sudo systemctl enable keepalived
+ sudo systemctl status keepalived
+ip a
+sudo systemctl stop keepalived
+sudo shutdown now
