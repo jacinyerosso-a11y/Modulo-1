@@ -1,0 +1,50 @@
+Modulo 6
+
+Pratica 1
+sudo apt update
+sudo apt install gnupg2 -y
+gpg --version
+mkdir practica_gpg
+cd practica_gpg
+echo "Este es un archivo secreto" > secreto.txt
+gpg -c secreto.txt
+ls
+cat secreto.txt.gpg
+gpg secreto.txt.gpg
+cat secreto.txt
+
+Pratica 2
+sudo apt update
+sudo apt install apache2 -y
+sudo apt install vsftpd -y
+sudo apt install openssh-server -y
+sudo systemctl status apache2
+sudo systemctl status vsftpd
+sudo systemctl status ssh
+sudo iptables -A INPUT -p tcp --dport 80 -j DROP
+sudo iptables -A INPUT -p tcp --dport 21 -j DROP
+sudo iptables -A INPUT -p tcp --dport 22 -j DROP
+sudo iptables -D INPUT -p tcp --dport 80 -j DROP
+sudo iptables -D INPUT -p tcp --dport 21 -j DROP
+sudo iptables -D INPUT -p tcp --dport 22 -j DROP
+sudo apt install ufw -y
+sudo ufw enable
+sudo ufw status
+sudo ufw deny 80
+sudo ufw deny 21
+sudo ufw deny 22
+sudo ufw allow 80
+sudo ufw allow 21
+sudo ufw allow 22sudo ufw allow 80
+sudo ufw allow 21
+sudo ufw allow 22
+
+Pratica 4
+sudo apt update
+sudo apt install libpam-google-authenticator -y
+dpkg -l | grep google-authenticator
+google-authenticator
+sudo nano /etc/pam.d/sshd
+sudo nano /etc/ssh/sshd_config
+sudo systemctl restart ssh
+sudo systemctl status ssh
