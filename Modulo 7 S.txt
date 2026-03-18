@@ -1,0 +1,63 @@
+Modulo 7´
+
+Pratica 1
+
+sudo apt update
+sudo apt install nfs-kernel-server -y
+sudo mkdir -p /OS3
+cd /OS3
+for i in {1..100}; do sudo touch Adrian$i.txt; done
+ls
+sudo chmod -R 777 /OS3
+sudo nano /etc/exports
+/OS3 *(rw,sync,no_subtree_check)
+sudo exportfs -a
+sudo systemctl restart nfs-kernel-server
+sudo exportfs -v
+sudo apt update
+sudo apt install nfs-common -y
+sudo mkdir -p /mnt/OS3
+sudo mount IP_DEL_SERVIDOR:/OS3 /mnt/OS3
+ls /mnt/OS3
+sudo nano /etc/fstab
+sudo mount -a
+ls /mnt/OS3
+
+Pratica 2´
+sudo apt update
+sudo apt install samba -y
+sudo systemctl status smbd
+sudo systemctl enable smbd
+sudo systemctl start smbd
+sudo mkdir -p /samba/OS3
+cd /samba/OS3
+for i in {1..100}; do sudo touch adrian$i; done
+ls
+sudo groupadd smbgrupo
+sudo passwd lanegracubana
+sudo chown -R root:smbgrupo /samba/OS3
+sudo chmod -R 770 /samba/OS3
+sudo nano /etc/samba/smb.conf
+sudo systemctl restart smbd
+testparm
+cat /samba/OS3/adrian99
+
+Pratica 3
+
+sudo apt update
+sudo apt install samba krb5-user winbind smbclient -y
+sudo systemctl stop smbd nmbd winbind
+sudo systemctl disable smbd nmbd winbind
+sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.bak
+sudo samba-tool domain provision --use-rfc2307 --interactive
+sudo cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
+sudo systemctl unmask samba-ad-dc
+sudo systemctl enable samba-ad-dc
+sudo systemctl start samba-ad-dc
+sudo systemctl status samba-ad-dc
+sudo samba-tool user add lanegracubana
+sudo samba-tool user list
+sudo nano /etc/resolv.conf
+nameserver 127.0.0.1
+search SO3.INET
+ping SO3.INET 
