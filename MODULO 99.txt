@@ -1,0 +1,61 @@
+Modulo 9
+
+Pratica 1
+sudo apt update && sudo apt upgrade -y
+sudo apt install wget apt-transport-https software-properties-common -y
+wget https://www.webmin.com/download/deb/webmin-current.deb
+sudo dpkg -i webmin-current.deb
+sudo systemctl status webmin
+
+Pratica 2
+sudo apt update
+sudo apt install -y gnupg software-properties-common wget curl
+
+wget -O - https://apt.releases.hashicorp.com/gpg | \
+sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | \
+sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+sudo apt update
+sudo apt install -y terraform
+terraform -v
+mkdir -p ~/terraform-do
+cd ~/terraform-do
+cat ~/.ssh/id_rsa.pub
+# o
+cat ~/.ssh/id_ed25519.pub
+nano main.tf
+nano terraform.tfvars
+
+Pratica 3
+sudo apt update
+sudo apt install -y ansible
+ansible --version
+sudo adduser ansible
+sudo usermod -aG sudo ansible
+su - ansible
+ssh-keygen -t rsa -b 4096
+sudo adduser ansible
+sudo usermod -aG sudo ansible
+winrm quickconfig
+sudo nano /etc/ansible/hosts
+sudo apt install -y python3-pip
+pip3 install pywinrm
+ansible linux -m ping
+
+Pratica 4
+
+ansible win -m win_copy -a "src=C:\\Users\\ansible\\Desktop\\archivo.txt dest=C:\\Users\\ansible\\Documents\\archivo.txt"
+ansible linux -m reboot
+ansible linux -m reboot --become
+
+Pratica 5
+
+
+ansible-playbook notepad_windows.yml
+nginx_linux.yml
+ansible-playbook nginx_linux.yml
+ansible linux -m shell -a "systemctl status nginx"
+ansible-playbook notepad_windows.yml
+ansible-playbook nginx_linux.yml
