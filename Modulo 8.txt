@@ -1,57 +1,220 @@
-Modulo 8
- Pratica 1
+####### Practica #1 #######
 
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl gnupg
+Instalacion de Docker
 
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
+Instalamos Docker
 
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+apt install docker.io
 
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-docker --version
-sudo systemctl status docker
-sudo docker pull nginx:latest
-sudo mkdir -p /home/website
-sudo nano /home/website/index.html
-sudo docker run -d \
-  --name mi_nginx \
-  -p 8888:80 \
-  -v /home/website:/usr/share/nginx/html \
-  nginx:latest
-sudo docker ps
-http://127.0.0.1:8888
+Instalamos imagen NGINX
 
-Pratica 2
+docker pull nginx:latest
+
+creamos pagina web con nuestro nombre y matricula
+
+mkdir -p /home/website
+echo "<h1>Reylin Santana Ortega - 2025-2253 </h1>" > /home/website/index.html
+
+si da error al hacer echo, hacerlo manual:
+
+nano /home/website/index.html
+
+y ahi pegar el contenido
+
+Creamos el contenedor con la configuracion adecuada para que se muestre la pagina web en el puerto 8888.
+
+docker run -d -p 8888:80 -v /home/website:/usr/share/nginx/html nginx
+
+(no hacer esta parte, es para el keepalive)
+
+docker run -d --name web-ha -p 8888:80 -v /home/website:/usr/share/nginx/html --restart always nginx
+
+Docker creado. hacemos un curl a la ip y puerto correspondiente para verificar el resultado y finalizamos la practica.
+
+------------------------------------------------------------------------
+COMANDOS PARA DOCKER
+
+1. Gestión de Contenedores (Ciclo de Vida)
+
+docker run              Crea y arranca un contenedor (es un create + start).
+
+docker ps               Lista los contenedores activos. (Usa -a para ver todos).
+
+docker stop             [ID]Detiene un contenedor de forma segura.
+
+docker start            [ID]Arranca un contenedor que ya estaba creado pero apagado.
+
+docker restart          [ID]Reinicia el contenedor.
+
+docker rm               [ID]Elimina un contenedor (debe estar apagado o usar -f).
+
+docker exec -it          [ID] bashVital: Entra a la terminal del contenedor.
 
 
-sudo docker pull portainer/portainer-ce:sts
-sudo docker volume create portainer_data
-sudo docker run -d \
-  -p 8000:8000 \
-  -p 9443:9443 \
-  --name portainer \
-  --restart=always \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v portainer_data:/data \
-  portainer/portainer-ce:sts
-sudo docker ps
-https://127.0.0.1:9443
 
-Pratica 3
+2. Manejo de Imágenes
 
-sudo apt-get update
-sudo apt-get install -y docker-compose-plugin
-docker compose version
-mkdir -p ~/wordpress-compose
-cd ~/wordpress-compose
-nano docker-compose.yml
-sudo docker compose up -d
-sudo docker compose ps
-http://127.0.0.1:8080
+
+docker pull [nombre]: Descarga una imagen desde Docker Hub.
+
+docker images: Lista todas las imágenes que tienes descargadas.
+
+docker rmi [ID]: Borra una imagen de tu disco local.
+
+docker build -t [nombre:tag] .: Crea tu propia imagen usando un archivo Dockerfile.
+
+docker tag [ID] [nombre_nuevo]: Cambia el nombre o etiqueta de una imagen.
+
+
+
+3. Inspección y Logs (Para Auditoría y Debugging)
+
+
+docker logs -f [ID]: Ver lo que está imprimiendo el contenedor en tiempo real.
+
+docker inspect [ID]: Muestra toda la configuración en JSON (IPs, montajes, variables de entorno).
+
+docker stats: Monitor de recursos en tiempo real (CPU, RAM, red).
+
+docker port [ID]: Te dice qué puerto del host está mapeado al contenedor.
+
+
+
+4. Volúmenes y Redes
+
+
+docker volume ls: Lista los volúmenes de persistencia.
+
+docker volume prune: Borra todos los volúmenes que no se estén usando (cuidado aquí).
+
+docker network ls: Lista las redes virtuales (Bridge, Host, None).
+
+docker network inspect [nombre]: Ver qué contenedores están conectados a esa red y sus IPs.
+
+
+
+
+5. Docker Compose (La navaja suiza)
+
+
+docker-compose up -d: Levanta todo lo definido en el .yml en segundo plano.
+
+docker-compose down: Apaga y borra los contenedores y redes del archivo.
+
+docker-compose stop: Solo apaga los contenedores sin borrarlos.
+
+docker-compose ps: Estado de los servicios del proyecto actual.
+
+
+
+
+
+###########################
+
+####### Practica #2 #######
+
+Instalacion de Portainer
+
+Utilizamos los oneliners de la pagina oficial de portainer 
+
+docker volume create portainer_data
+
+docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
+
+Ingresamos por navegador a la pagina de administracion (localhost:9443)
+
+Establecemos contraseña para el usuario administrador
+
+Vamos a Enviroments y podemos usar el local, o crear uno nuevo, en caso de, seguimos los pasos de la pagina.
+
+Seleccionamos el Enviroment adecuado, donde veremos los contenedores en ejecucion y podremos ser capaces de detener el contenedor creado anteriormente con un simple click a stop y
+con esto, finalizamos la practica.
+
+###########################
+
+####### Practica #3 #######
+
+Instalar Docker-Compose y desplegar un wordpress con el
+
+Instalamos dependencias
+
+apt install python3 python3-pip
+
+en caso de problemas con el managed enviroment, hacer
+
+sudo mv /usr/lib/python3.11/EXTERNALLY-MANAGED /usr/lib/python3.11/EXTERNALLY-MANAGED.old
+
+Instalamos Docker-Compose
+
+apt install docker-compose -y
+
+comprobamos su funcionamiento
+
+docker-compose -v
+
+creamos un directorio wordpress
+
+mkdir /home/wordpress
+
+creamos un archivo de texto docker-compose.yml
+
+nano /home/wordpress/docker-compose.yml
+
+introducimos el siguiente contenido:
+
+version: "3" 
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MySQLRootPassword
+      MYSQL_DATABASE: MySQLDatabaseName
+      MYSQL_USER: MySQLUsername
+      MYSQL_PASSWORD: MySQLUserPassword
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: MySQLUsername
+      WORDPRESS_DB_PASSWORD: MySQLUserPassword
+      WORDPRESS_DB_NAME: MySQLDatabaseName
+    volumes:
+      - "./:/var/www/html"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: MySQLUsername
+      PMA_PASSWORD: MySQLUserPassword
+
+volumes:
+  mysql: {}
+
+guardamos y cerramos
+
+entramos al directorio wordpress
+
+cd wordpress
+
+ejecutamos el comando para iniciar la instalacion
+
+docker-compose up -d
+
+esperamos y seguimos el proceso en web (localhost:80)
+
+establecemos idioma, luego usuario, contraseña, correo (no validado) y confirmamos todo.
+
+ya con esto, finalizamos la practica.
+
+###########################
