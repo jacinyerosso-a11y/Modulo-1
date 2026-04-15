@@ -1,118 +1,228 @@
-Modulo 4
-Pratica 1
+#############practica 1####################
+actualizamos los repositorios y instalamos apache
+
 sudo apt update
-sudo apt install apache2 -y
-sudo systemctl enable apache2
-sudo systemctl start apache2
+sudo apt install apache2
 
-sudo mkdir -p /var/www/hola
-sudo chown -R $USER:$USER /var/www/hola
 
-echo '<!DOCTYPE html>
+primera parte
+
+Creamos archivos de virtualhosting para el puerto 80 (Hola Mundo)
+
+cd /etc/apache2
+cd sites-available
+nano holamundo.conf 
+
+agregamos nuestro host virtual
+
+<VirtualHost *:80>
+    ServerAdmin admin@midominio.local
+    ServerName holamundo.local
+    ServerAlias www.holamundo.local
+    DocumentRoot /var/www/holamundo.local
+
+    <Directory /var/www/holamundo.local>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/holamundo_error.log
+    CustomLog ${APACHE_LOG_DIR}/holamundo_access.log combined
+</VirtualHost>
+
+
+actualizamos 
+
+a2ensite holamundo.conf
+systemctl reload apache2
+
+
+Agregamos contenido al virtualhosting web
+
+nano /var/www/holamundo.local/index.html
+
 <html>
-<head><title>Hola Mundo</title></head>
+<title>
+Hola Mundo
+</title>
 <body>
-<h1>Hola Mundo</h1>
+<h1>
+Hola Mundo
+</h1>
 </body>
-</html>' | sudo tee /var/www/hola/index.html
+</html>
 
-sudo nano /etc/apache2/sites-available/hola.conf
-sudo a2ensite hola.conf
-sudo a2dissite 000-default.conf
-sudo systemctl restart apache2
+Incluimos hola.local en el /etc/hosts
 
-sudo mkdir -p /var/www/jacinyer
-sudo chown -R $USER:$USER /var/www/jacinyer
+nano /etc/hosts
 
-echo '<!DOCTYPE html>
-<html>
-<head><title>Datos Personales</title></head>
-<body>
-<h1>Jacinyer Rosso</h1>
-<h2>Matricula: 2025-1440</h2>
-<h3>Materia: Sistema Operativo</h3>
-</body>
-</html>' | sudo tee /var/www/jacinyer/index.html
+Agregamos
 
+127.0.0.1 holamundo.local
+
+Probamos con curl o con nuestro navegador
+
+###############
+segunda parte 
+
+
+configuramos para permitir el puerto 8080
 sudo nano /etc/apache2/ports.conf
+Agregamos
+
 Listen 8080
-sudo nano /etc/apache2/sites-available/jacinyer.conf
-sudo a2ensite jacinyer.conf
-sudo systemctl restart apache2
 
-Pratica 2
+Guardamos y hacemos restart
+
+systemctl restart apache2
+
+Agregamos archivos virtualhosting para la pagina del puerto 8080
+
+sudo nano /etc/apache2/sites-avaiable/reylinlocal.conf
+
+Escribimos
+
+<VirtualHost *:8080>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/reylinlocal
+    ServerName reylin.local
+    ErrorLog ${APACHE_LOG_DIR}/error8080.log
+    CustomLog ${APACHE_LOG_DIR}/access8080.log combined
+</VirtualHost>
+
+Guardamos y cerramos
+
+Agregamos contenido a la ruta del virtual hosting de Apache
+
+cd /var/www/
+mkdir reylinlocal
+sudo nano /var/www/reylinlocal/index.html
+
+Nombre: Reylin Santana Ortega
+Matricula: 20252253
+Materia: Sitemas operativos 3
+
+Activamos la pagina y reiniciamos apache
+
+sudo a2ensite reylilocal.conf
+sudo systemctl reload apache2
+
+Agregamos el dominio al /etc/hosts para que lo reconozca
+
+nano /etc/hosts
+
+127.0.0.1 reylin.local
+
+Probamos la pagina
+
+
+
+######################Practica 2############################
+
+
+actualizamos y instalamos
+
 sudo apt update
-sudo apt install postfix mailutils -y
-sudo systemctl enable postfix
-sudo systemctl start postfix
-sudo systemctl status postfix
-echo "Jacinyer Rosso 2025-1440" | mail -s "MambruSeFueALaGuerra" os3conadrian@gmail.com
-mailq
-# 0) (Opcional pero recomendado) Poner hostname y hosts
-sudo hostnamectl set-hostname mailserver
-echo "127.0.1.1 mailserver" | sudo tee -a /etc/hosts
+sudo apt install postfix mailutils libsasl2-modules -y
 
-# 1) Instalar Postfix + herramientas de correo
-sudo apt update
-sudo apt install postfix mailutils -y
+vamos a la carpeta de configuracion
 
-# Durante el asistente:
-# - General type of mail configuration: Internet Site
-# - System mail name: mailserver (o tu dominio si tienes)
 
-# 2) Asegurar que Postfix esté corriendo
-sudo systemctl enable postfix
-sudo systemctl restart postfix
-sudo systemctl status postfix --no-pager
+sudo nano /etc/postfix/main.cf
 
-# 3) Configuración básica (asegura envío local y salida SMTP)
-sudo postconf -e "myhostname = mailserver"
-sudo postconf -e "myorigin = /etc/mailname"
-sudo postconf -e "inet_interfaces = all"
-sudo postconf -e "inet_protocols = all"
-sudo postconf -e "mydestination = \$myhostname, localhost.localdomain, localhost"
-sudo postconf -e "mynetworks = 127.0.0.0/8 [::1]/128"
-sudo postconf -e "home_mailbox = Maildir/"
+modificamos los ajustes con estos scrip 
 
-# 4) Aplicar cambios y recargar
-sudo systemctl restart postfix
+# CONFIGURACION BASICA
+myhostname = localhost
+mydomain = localhost
+myorigin = $mydomain
 
-# 5) Abrir puerto 25 (si usas UFW; si no tienes UFW, ignora)
-sudo ufw allow 25/tcp 2>/dev/null || true
-sudo ufw reload 2>/dev/null || true
+# REDES Y DESTINOS
+inet_interfaces = localhost
+mynetworks = 127.0.0.0/8 [::1]/128
+mydestination = $myhostname, localhost
 
-# 6) Probar conectividad a internet (si esto falla, NO saldrá el correo)
-ping -c 3 8.8.8.8
+# RELAY GMAIL
+relayhost = [smtp.gmail.com]:587
 
-# 7) Enviar el correo EXACTO al maestro
-echo "Jacinyer Rosso 2025-1440" | mail -s "MambruSeFueALaGuerra" os3conadrian@gmail.com
+# AUTENTICACIÓN GMAIL
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_sasl_mechanism_filter = plain
 
-# 8) Ver si quedó en cola (debe quedar vacío o bajar rápido)
-mailq
+# SEGURIDAD TLS
+smtp_use_tls = yes
+smtp_tls_security_level = encrypt
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 
-# 9) Ver el log del intento de envío (lo que el profe ama)
-sudo tail -n 80 /var/log/mail.log
+# ALIASES
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
 
-Pratica 3 
-sudo apt update
-sudo apt install cups cups-pdf -y
 
-sudo systemctl enable cups
-sudo systemctl start cups
+luego borramos la linea smtp_tls_security_level=may
 
-sudo usermod -aG lpadmin $USER
+luego vamos a esta ruta
 
-sudo nano /etc/cups/cupsd.conf
-<Location />
-  Allow all
-</Location>
+sudo nano /etc/postfix/sasl_passwd
 
-<Location /admin>
-  Allow all
-</Location>
+y escribimos 
 
-<Location /admin/conf>
-  Allow all
-</Location>
-sudo systemctl restart cups
-http://localhost:631
+[smtp.gmail.com]:587 mas el correo que utlizaremos:aqui ponemos la contraseña de aplicacion 
+
+[smtp.gmail.com]:587 reylinsantana.o@gmail.com:kvaj dvgt dwvo xsuz
+
+luego le damos permiso 
+
+sudo chmod 600 /etc/postfix/sasl_passwd
+sudo postmap /etc/postfix/sasl_passwd
+
+y probamos para enviar el correo 
+
+echo "hola como estas" | mail -s "El asunto" + el correo donde se enviara
+
+#################practica 3####################
+
+
+####################Practica 3#####################
+
+Instalamos CUPS y CUPS-PDF (como root)
+
+apt install CUPS CUPS-PDF -y
+
+Agregamos un usuario al grupo lpadmin (en mi caso el usuario ubuntu)
+
+usermod -aG lpadmin ubuntu
+
+Permitimos las conexiones externas, conexiones externas de administrador y compartimos las impresoras
+
+cupsctl --remote-admin --remote-any --share-printers
+
+Accedemos al web panel
+
+127.0.0.1:631
+
+Nos logeamos como administrador en la pagina (usuario y contraseña del usuario en lpadmin)
+
+Creamos una impresora nueva
+
+Utilizamos la impresora local CUPS-PDF
+
+Permitimos compartirla
+
+Utilizamos el driver generic
+
+Utilizamos el driver CUPS-PDF Generic no-config
+
+Creamos la impresora y probamos con una pagina de prueba (se guarda en el usuario de administrador usado en la ruta (/home/(usuario)/PDF/)
+
+Agregamos impresora en windows
+
+Abrimos configuracion > Bluetooth y Dispositivos > Impresoras y Escaneres > Agregar Dispositivo > (Si no nos sale al principio, vamos a agregar dispositivo manualmente) >
+Introducimos la ruta de la impresora http://(ip):(puerto)/printers/(impresora) http://192.168.100.13:631/printers/Alan-PDF
+
+Seleccionamos el driver generico text only
+
+Terminamos de agregar la impresora y por ultimo seleccionamos un archivo y lo imprimimos.
