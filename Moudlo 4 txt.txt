@@ -79,14 +79,14 @@ systemctl restart apache2
 
 Agregamos archivos virtualhosting para la pagina del puerto 8080
 
-sudo nano /etc/apache2/sites-avaiable/reylinlocal.conf
+sudo nano /etc/apache2/sites-avaiable/jacinyerlocal.conf
 
 Escribimos
 
 <VirtualHost *:8080>
     ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/reylinlocal
-    ServerName reylin.local
+    DocumentRoot /var/www/jacinyerlocal
+    ServerName jacinyer.local
     ErrorLog ${APACHE_LOG_DIR}/error8080.log
     CustomLog ${APACHE_LOG_DIR}/access8080.log combined
 </VirtualHost>
@@ -96,23 +96,23 @@ Guardamos y cerramos
 Agregamos contenido a la ruta del virtual hosting de Apache
 
 cd /var/www/
-mkdir reylinlocal
-sudo nano /var/www/reylinlocal/index.html
+mkdir jacinyerlocal
+sudo nano /var/www/jacinyer/index.html
 
-Nombre: Reylin Santana Ortega
-Matricula: 20252253
+Nombre: Jacinyer Rosso
+Matricula: 20251440
 Materia: Sitemas operativos 3
 
 Activamos la pagina y reiniciamos apache
 
-sudo a2ensite reylilocal.conf
+sudo a2ensite jacinyerlocal.conf
 sudo systemctl reload apache2
 
 Agregamos el dominio al /etc/hosts para que lo reconozca
 
 nano /etc/hosts
 
-127.0.0.1 reylin.local
+127.0.0.1 jacinyer.local
 
 Probamos la pagina
 
@@ -221,8 +221,7 @@ Creamos la impresora y probamos con una pagina de prueba (se guarda en el usuari
 Agregamos impresora en windows
 
 Abrimos configuracion > Bluetooth y Dispositivos > Impresoras y Escaneres > Agregar Dispositivo > (Si no nos sale al principio, vamos a agregar dispositivo manualmente) >
-Introducimos la ruta de la impresora http://(ip):(puerto)/printers/(impresora) http://192.168.100.13:631/printers/Alan-PDF
-
+Introducimos la ruta de la impresora http://(ip):(puerto)/printers/(impresora) 
 Seleccionamos el driver generico text only
 
 Terminamos de agregar la impresora y por ultimo seleccionamos un archivo y lo imprimimos.
